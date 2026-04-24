@@ -214,7 +214,7 @@ p { margin: 0; }
   gap: var(--s-7);
 }
 
-/* Drywall texture — warm raking light × orange-peel stipple × fine grain */
+/* Hero background — freshly taped-and-mudded room, warm white wash for legibility */
 .hero::before {
   content: "";
   position: absolute;
@@ -224,15 +224,18 @@ p { margin: 0; }
   width: 100vw;
   z-index: -1;
   background:
-    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.95' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.18  0 0 0 0 0.14  0 0 0 0 0.09  0 0 0 0.34 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"),
-    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='520' height='520'><filter id='m'><feTurbulence type='fractalNoise' baseFrequency='0.045' numOctaves='2' seed='8' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.22  0 0 0 0 0.17  0 0 0 0 0.11  0 0 0 0.22 0'/></filter><rect width='100%' height='100%' filter='url(%23m)'/></svg>"),
-    radial-gradient(ellipse 120% 95% at 22% 15%,
-      oklch(0.99 0.014 84) 0%,
-      oklch(0.965 0.02 78) 35%,
-      oklch(0.92 0.026 72) 72%,
-      oklch(0.86 0.032 64) 100%);
-  background-size: 180px 180px, 520px 520px, 100% 100%;
-  background-repeat: repeat, repeat, no-repeat;
+    /* text-side lightener: brightens the area behind the title/lede */
+    radial-gradient(ellipse 95% 80% at 18% 35%,
+      oklch(0.99 0.008 82 / 0.68) 0%,
+      oklch(0.97 0.01 80 / 0.35) 40%,
+      oklch(0.95 0.012 78 / 0.08) 75%,
+      transparent 100%),
+    /* overall warm wash */
+    linear-gradient(180deg,
+      oklch(0.96 0.012 80 / 0.25) 0%,
+      oklch(0.93 0.015 75 / 0.25) 100%),
+    /* the photo */
+    url("assets/hero-drywall.jpg") center 38% / cover no-repeat;
   pointer-events: none;
 }
 
@@ -298,26 +301,6 @@ p { margin: 0; }
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--ink-3);
-}
-.hero__scroll {
-  position: absolute;
-  right: var(--gutter);
-  bottom: var(--s-7);
-  display: none;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--s-3);
-  font-size: 11px;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--ink-3);
-}
-.hero__scroll svg { animation: scrollNudge 2.4s var(--ease-out) infinite; }
-@media (min-width: 1080px) { .hero__scroll { display: inline-flex; } }
-
-@keyframes scrollNudge {
-  0%, 100% { transform: translateY(0); opacity: 0.65; }
-  50%      { transform: translateY(6px); opacity: 1; }
 }
 
 /* ===== BEFORE / AFTER ===== */
