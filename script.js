@@ -9,11 +9,11 @@
   const yearEl = document.getElementById("year");
   if (yearEl) yearEl.textContent = new Date().getFullYear();
 
-  /* ---------- Before / After slider ---------- */
-  const slider = document.getElementById("baSlider");
-  if (slider) {
+  /* ---------- Before / After sliders (one or many per page) ---------- */
+  const initSlider = (slider) => {
     const before = slider.querySelector(".ba__before");
     const handle = slider.querySelector(".ba__handle");
+    if (!before || !handle) return;
 
     let dragging = false;
 
@@ -53,13 +53,11 @@
     window.addEventListener("touchmove", move, { passive: true });
     window.addEventListener("touchend", end);
 
-    // Click anywhere on slider (for non-drag users)
     slider.addEventListener("click", (e) => {
       if (e.target.closest(".ba__handle")) return;
       setPos(posFromEvent(e));
     });
 
-    // Keyboard
     handle.addEventListener("keydown", (e) => {
       const current = parseFloat(handle.getAttribute("aria-valuenow")) || 50;
       if (e.key === "ArrowLeft")  { setPos(current - 2); e.preventDefault(); }
@@ -68,9 +66,7 @@
       if (e.key === "End")        { setPos(100); e.preventDefault(); }
     });
 
-    // Little nudge on first view so people get it
     const nudge = () => {
-      let pct = 50;
       const target = 62;
       const t0 = performance.now();
       const dur = 900;
@@ -80,7 +76,6 @@
         setPos(50 + (target - 50) * eased);
         if (p < 1) requestAnimationFrame(tick);
         else {
-          // swing back
           const t1 = performance.now();
           const back = (t) => {
             const p2 = Math.min(1, (t - t1) / 800);
@@ -104,13 +99,15 @@
           io.unobserve(slider);
         }
       });
-    }, { threshold: 0.4 });
+    }, { threshold: 0.35 });
     io.observe(slider);
-  }
+  };
+
+  document.querySelectorAll(".ba__slider").forEach(initSlider);
 
   /* ---------- Reveal on scroll ---------- */
   const revealables = document.querySelectorAll(
-    ".section-head, .services__grid, .process__list, .why__grid, .about__media, .about__copy, .quotes__grid, .faq__list, .contact__head, .form, .hero__stats"
+    ".section-head, .services__grid, .process__list, .why__grid, .about__media, .about__copy, .quotes__grid, .faq__list, .contact__head, .form, .hero__stats, .recent__grid, .gallery, .page-head, .ba-stack__head"
   );
   revealables.forEach((el) => el.classList.add("reveal"));
 
