@@ -139,7 +139,7 @@
     );
     const subject = encodeURIComponent("Website quote request — " + (data.name || ""));
 
-    window.location.href = "mailto:josh@dryprodrywall.ca?subject=" + subject + "&body=" + body;
+    window.location.href = "mailto:dryprodrywall@gmail.com?subject=" + subject + "&body=" + body;
 
     if (thanks) {
       thanks.hidden = false;
