@@ -1,6 +1,6 @@
-# Dry Pro Dry Wall
+# DryPro Dry Wall
 
-Marketing site for Dry Pro Dry Wall — drywall, taping, mudding and Level 5 finish in Victoria, BC.
+Marketing site for DryPro Dry Wall — drywall, taping, mudding and Level 5 finish in Victoria, BC.
 
 Static site. No build step.
 

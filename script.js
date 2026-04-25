@@ -1,5 +1,5 @@
 /* ----------------------------------------------
-   Dry Pro Dry Wall — interactions
+   DryPro Dry Wall — interactions
    ---------------------------------------------- */
 
 (function () {
@@ -144,4 +144,117 @@
     }
     return false;
   };
+
+  /* ---------- Lightbox for gallery images ---------- */
+  (function initLightbox() {
+    const containers = document.querySelectorAll(".gallery, .recent__grid");
+    if (!containers.length) return;
+
+    const lb = document.createElement("div");
+    lb.className = "lightbox";
+    lb.setAttribute("aria-hidden", "true");
+    lb.setAttribute("role", "dialog");
+    lb.setAttribute("aria-modal", "true");
+    lb.innerHTML =
+      '<div class="lightbox__backdrop"></div>' +
+      '<div class="lightbox__counter" aria-live="polite"></div>' +
+      '<button class="lightbox__close" type="button" aria-label="Close">' +
+        '<svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M4 4 L16 16 M16 4 L4 16" stroke="currentColor" stroke-width="1.75" fill="none" stroke-linecap="round"/></svg>' +
+      '</button>' +
+      '<button class="lightbox__nav lightbox__nav--prev" type="button" aria-label="Previous image">' +
+        '<svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6 L9 12 L15 18" stroke="currentColor" stroke-width="1.75" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>' +
+      '</button>' +
+      '<button class="lightbox__nav lightbox__nav--next" type="button" aria-label="Next image">' +
+        '<svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6 L15 12 L9 18" stroke="currentColor" stroke-width="1.75" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>' +
+      '</button>' +
+      '<figure class="lightbox__figure">' +
+        '<img class="lightbox__img" alt="" />' +
+        '<figcaption class="lightbox__cap"></figcaption>' +
+      '</figure>';
+    document.body.appendChild(lb);
+
+    const imgEl   = lb.querySelector(".lightbox__img");
+    const capEl   = lb.querySelector(".lightbox__cap");
+    const ctrEl   = lb.querySelector(".lightbox__counter");
+    const prevBtn = lb.querySelector(".lightbox__nav--prev");
+    const nextBtn = lb.querySelector(".lightbox__nav--next");
+    const closeBtn = lb.querySelector(".lightbox__close");
+    const backdrop = lb.querySelector(".lightbox__backdrop");
+
+    let current = null;
+    let idx = 0;
+    let lastFocus = null;
+
+    const render = () => {
+      const item = current[idx];
+      imgEl.src = item.src;
+      imgEl.alt = item.alt;
+      capEl.textContent = item.caption;
+      capEl.hidden = !item.caption;
+      ctrEl.textContent = (idx + 1) + " / " + current.length;
+      const multi = current.length > 1;
+      prevBtn.hidden = !multi;
+      nextBtn.hidden = !multi;
+      ctrEl.hidden = !multi;
+    };
+
+    const open = (group, startIdx) => {
+      current = group;
+      idx = startIdx;
+      lastFocus = document.activeElement;
+      render();
+      lb.classList.add("is-open");
+      lb.setAttribute("aria-hidden", "false");
+      document.body.style.overflow = "hidden";
+      closeBtn.focus();
+    };
+
+    const close = () => {
+      lb.classList.remove("is-open");
+      lb.setAttribute("aria-hidden", "true");
+      document.body.style.overflow = "";
+      current = null;
+      if (lastFocus && typeof lastFocus.focus === "function") lastFocus.focus();
+    };
+
+    const next = () => { if (current) { idx = (idx + 1) % current.length; render(); } };
+    const prev = () => { if (current) { idx = (idx - 1 + current.length) % current.length; render(); } };
+
+    closeBtn.addEventListener("click", close);
+    backdrop.addEventListener("click", close);
+    nextBtn.addEventListener("click", next);
+    prevBtn.addEventListener("click", prev);
+
+    window.addEventListener("keydown", (e) => {
+      if (!lb.classList.contains("is-open")) return;
+      if (e.key === "Escape") { e.preventDefault(); close(); }
+      else if (e.key === "ArrowRight") { e.preventDefault(); next(); }
+      else if (e.key === "ArrowLeft")  { e.preventDefault(); prev(); }
+    });
+
+    containers.forEach((container) => {
+      const tiles = Array.from(container.querySelectorAll("figure"));
+      if (!tiles.length) return;
+      const group = tiles.map((tile) => {
+        const tImg = tile.querySelector("img");
+        const tCap = tile.querySelector("figcaption");
+        return {
+          src: tImg ? (tImg.currentSrc || tImg.src) : "",
+          alt: tImg ? (tImg.alt || "") : "",
+          caption: tCap ? tCap.textContent.trim() : "",
+        };
+      });
+      tiles.forEach((tile, i) => {
+        tile.classList.add("is-lightbox-target");
+        tile.setAttribute("tabindex", "0");
+        tile.setAttribute("role", "button");
+        tile.setAttribute("aria-label", "Open image" + (group[i].caption ? ": " + group[i].caption : ""));
+        const doOpen = () => open(group, i);
+        tile.addEventListener("click", doOpen);
+        tile.addEventListener("keydown", (e) => {
+          if (e.key === "Enter" || e.key === " ") { e.preventDefault(); doOpen(); }
+        });
+      });
+    });
+  })();
 })();
