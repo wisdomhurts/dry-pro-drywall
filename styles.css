@@ -207,8 +207,11 @@ p { margin: 0; }
   position: relative;
   isolation: isolate;
   max-width: var(--maxw);
-  margin: 0 auto;
-  padding: clamp(60px, 9vw, 140px) var(--gutter) clamp(48px, 7vw, 100px);
+  margin: 0;
+  padding-top: clamp(60px, 9vw, 140px);
+  padding-right: var(--gutter);
+  padding-bottom: clamp(48px, 7vw, 100px);
+  padding-left: clamp(20px, 4vw, 96px);
   display: grid;
   grid-template-columns: 1fr;
   gap: var(--s-7);
